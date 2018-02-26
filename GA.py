@@ -169,8 +169,8 @@ class GA:
         Goes through each individual of the population, and with a certain probability will mutate them
         """
 
-        xStdDev = (self.domain[1]-self.domain[0])/6
-        yStdDev = (self.range[1]-self.range[0])/6
+        xStdDev = (self.domain[1]-self.domain[0])/15
+        yStdDev = (self.range[1]-self.range[0])/15
 
         for mutant in self.population:
 
