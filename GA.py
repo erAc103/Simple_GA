@@ -134,8 +134,8 @@ class GA:
         x = (parent1.x + parent2.x)/2
         y = (parent1.y + parent2.y)/2
 
-        stdDevX = (abs(parent1.x - parent2.x))
-        stdDevY = (abs(parent1.y - parent2.y))
+        stdDevX = (abs(parent1.x - parent2.x))/2
+        stdDevY = (abs(parent1.y - parent2.y))/2
 
         #stdDevX = (self.domain[1] - self.domain[0])/12
         #stdDevY = (self.range[1] - self.range[0])/12
