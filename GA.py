@@ -137,9 +137,6 @@ class GA:
         stdDevX = (abs(parent1.x - parent2.x))/2
         stdDevY = (abs(parent1.y - parent2.y))/2
 
-        #stdDevX = (self.domain[1] - self.domain[0])/12
-        #stdDevY = (self.range[1] - self.range[0])/12
-
         child1 = None
         child2 = None
 
@@ -170,8 +167,10 @@ class GA:
     def mutate(self):
         """
         Goes through each individual of the population, and with a certain probability will mutate them
-        Mutate will move current point to a random location within the valid domain and range
         """
+
+        xStdDev = (self.domain[1]-self.domain[0])/6
+        yStdDev = (self.range[1]-self.range[0])/6
 
         for mutant in self.population:
 
@@ -179,15 +178,14 @@ class GA:
 
             if roll <= self.mutationRate:
 
-                x = np.random.uniform(self.domain[0], self.domain[1])
-                y = np.random.uniform(self.range[0], self.range[1])
-                fit = self.func([x, y])
+                flip = np.random.choice([True, False])
 
-                mutant.x = x
-                mutant.y = y
-                mutant.fit = fit
-
-
+                if flip:
+                    mutant.x = np.random.normal(mutant.x, xStdDev)
+                    mutant.fit = self.func([mutant.x, mutant.y])
+                else:
+                    mutant.y = np.random.normal(mutant.y, yStdDev)
+                    mutant.fit = self.func([mutant.x, mutant.y])
 
 
     def run(self):
@@ -218,6 +216,7 @@ class GA:
         print('Worst fitness value:\t',self.worst.fit,'\t@',[self.worst.x, self.worst.y])
         print('Average fitness value:\t', self.average)
 
+    # helper function for graph
     def getData(self, gen):
         """ returns x and y data for a given generation """
         x = []
