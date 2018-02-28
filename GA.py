@@ -34,6 +34,9 @@ class GA:
         self.average = None
 
         self.popHistory = []
+        self.bestHistory = []
+        self.worstHistory = []
+        self.averageHistory = []
 
 
     def initializePopulation(self):
@@ -181,11 +184,24 @@ class GA:
                 flip = np.random.choice([True, False])
 
                 if flip:
+
                     mutant.x = np.random.normal(mutant.x, xStdDev)
                     mutant.fit = self.func([mutant.x, mutant.y])
+
+                    # check if new x is valid
+                    while self.domain[0] > mutant.x or mutant.x > self.domain[1]:
+                        mutant.x = np.random.normal(mutant.x, xStdDev)
+                        mutant.fit = self.func([mutant.x, mutant.y])
+
                 else:
+
                     mutant.y = np.random.normal(mutant.y, yStdDev)
                     mutant.fit = self.func([mutant.x, mutant.y])
+
+                    # check if new y is valid
+                    while self.range[0] > mutant.y or mutant.y > self.range[1]:
+                        mutant.y = np.random.normal(mutant.y, yStdDev)
+                        mutant.fit = self.func([mutant.y, mutant.y])
 
 
     def run(self):

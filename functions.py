@@ -25,7 +25,7 @@ def beale(x):
                 2.625 - x[0] + x[0] * (x[1] ** 3)) ** 2)
 
 
-def ackley(x):
+def eggholder(x):
     """ min @ func(512, 404.2319) = -959.6507       range and domain @ [-512, 512]"""
     return -1*(-1*(x[1]+47)*np.sin(np.sqrt(abs((x[0]/2) + x[1] + 47))) - x[0]*np.sin(np.sqrt(abs(x[0] - (x[1] + 47)))))
 
