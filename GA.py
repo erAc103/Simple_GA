@@ -251,12 +251,13 @@ class GA:
 
         return ret
 
-
+    # saves data for graphing
     def saveData(self, pop):
         self.bestHistory.append(self.best)
         self.worstHistory.append(self.worst)
         self.averageHistory.append(self.average)
         self.popHistory.append(pop)
+
 
     def graph(self):
         # data for graphing
@@ -287,7 +288,9 @@ class GA:
         graph3, = plt.plot([], [], '-x', color='red', label='Worst')  # worst
         graph4, = plt.plot([], [], '-.', color='green', label='Average')  # average
         plt.xlim(0, self.iterations+1)
-        plt.ylim(-.25, 1.1)
+
+        ''' Adjust this to fit max fitness for your function!!! '''
+        plt.ylim(-.25, 1.05)
 
 
         def animate(i):
