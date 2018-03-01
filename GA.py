@@ -20,7 +20,7 @@ class GA:
         :param prematureStop: stops when points converge
         """
 
-        # setting parameters
+        # setting fields
         self.func = func
         self.domain = domain
         self.range = range
@@ -69,6 +69,18 @@ class GA:
         for a in self.population:
             print(count,'#  ', a.x, a.y)
             count += 1
+
+    def clear(self):
+        self.population = []
+        self.best = None
+        self.worst = None
+        self.average = None
+        self.popHistory = []
+        self.bestHistory = []
+        self.worstHistory = []
+        self.averageHistory = []
+        self.convergenceData = []
+        self.totalGenerations = 0
 
 
     def evaluate(self):
@@ -228,7 +240,7 @@ class GA:
 
             # stop search when average and best are close
             if self.prematureStop:
-                if abs(self.best.fit - self.average) < 0.0005:
+                if abs(self.best.fit - self.average) < 0.001 or count == self.iterations:
                     self.convergenceData.append(count)
                     self.convergenceData.append([self.best.x, self.best.y])
                     self.convergenceData.append(self.best.fit)
@@ -241,6 +253,8 @@ class GA:
         print('Best fitness value:\t\t',self.best.fit,'\t@',[self.best.x, self.best.y])
         print('Worst fitness value:\t',self.worst.fit,'\t@',[self.worst.x, self.worst.y])
         print('Average fitness value:\t', self.average)
+        if self.prematureStop:
+            print('Converged in',self.totalGenerations, 'generations')
 
     # clones population - should fix some weird graphing shit
     def copyPop(self):
