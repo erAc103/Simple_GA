@@ -4,7 +4,7 @@ import csv
 
 
 if __name__ == '__main__':
-    gen = GA.GA(fun.sinc3D, [-5, 5], [-5, 5], 15, 30, .01)
+    gen = GA.GA(fun.sinc3D, [-5, 5], [-5, 5], 15, 40, .05, prematureStop=True)
     gen.run()
     gen.graph()
 

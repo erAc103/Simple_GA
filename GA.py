@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class GA:
 
-    def __init__(self, func, domain, range, populationSize, iterations, mutationRate):
+    def __init__(self, func, domain, range, populationSize, iterations, mutationRate, prematureStop = False):
         """
         :param func: function to maximize
         :param domain: [min, max] x values
@@ -17,25 +17,37 @@ class GA:
         :param populationSize: # of points searching
         :param iterations: # of generations
         :param mutationRate: # 0 <= mutation rate <= 1
+        :param prematureStop: stops when points converge
         """
 
+        # setting parameters
         self.func = func
         self.domain = domain
         self.range = range
         self.populationSize = populationSize
         self.iterations = iterations
         self.mutationRate = mutationRate
+        self.prematureStop = prematureStop
 
+        # holds population of points
         self.population = []
 
+        # holds copies of best and worst points
         self.best = None
         self.worst = None
+
+        # holds average fitness of population
         self.average = None
 
+        # misc. data for plotting and what not
         self.popHistory = []
         self.bestHistory = []
         self.worstHistory = []
         self.averageHistory = []
+        self.convergenceData = []
+
+        # number of generations completed
+        self.totalGenerations = 0
 
 
     def initializePopulation(self):
@@ -214,6 +226,16 @@ class GA:
 
             count += 1
 
+            # stop search when average and best are close
+            if self.prematureStop:
+                if abs(self.best.fit - self.average) < 0.0005:
+                    self.convergenceData.append(count)
+                    self.convergenceData.append([self.best.x, self.best.y])
+                    self.convergenceData.append(self.best.fit)
+                    break
+
+        self.totalGenerations = count
+
         print()
         print('FINISHED!')
         print('Best fitness value:\t\t',self.best.fit,'\t@',[self.best.x, self.best.y])
@@ -287,7 +309,7 @@ class GA:
         graph2, = plt.plot([], [], '-o', color='blue', label='Best')  # best
         graph3, = plt.plot([], [], '-x', color='red', label='Worst')  # worst
         graph4, = plt.plot([], [], '-.', color='green', label='Average')  # average
-        plt.xlim(0, self.iterations+1)
+        plt.xlim(0, self.totalGenerations)
 
         ''' Adjust this to fit max fitness for your function!!! '''
         plt.ylim(-.25, 1.05)
@@ -302,7 +324,7 @@ class GA:
 
             return graph1, graph2, graph3, graph4
 
-        ani = FuncAnimation(fig, animate, frames=self.iterations+1, interval=300, repeat_delay=3000)
+        ani = FuncAnimation(fig, animate, frames=self.totalGenerations+1, interval=300, repeat_delay=4000)
         # ani.save('genetic-algorithm.gif', dpi=80, writer='imagemagick')
 
         plt.show()
