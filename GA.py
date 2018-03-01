@@ -27,7 +27,6 @@ class GA:
         self.mutationRate = mutationRate
 
         self.population = []
-        self.populationFitness = 0
 
         self.best = None
         self.worst = None
@@ -50,7 +49,6 @@ class GA:
             self.population.append(Point(x, y, fit))
 
         self.popHistory.append(self.population)
-        self.popFitness()
 
 
     def debug(self):
@@ -63,25 +61,20 @@ class GA:
 
     def evaluate(self):
         """ Update populations best, worst, and average """
-        self.popFitness()
+        clonePop = self.copyPop()
 
-        for p in self.population:
-            if self.best is None or self.best.fit < p.fit:
-                self.best = p
+        self.best = clonePop[0]
+        self.worst = clonePop[0]
 
-            if self.worst is None or self.worst.fit > p.fit:
-                self.worst = p
+        for point in clonePop:
+            if point.fit > self.best.fit:
+                self.best = point
+            if point.fit < self.worst.fit:
+                self.worst = point
 
-        self.average = self.populationFitness/self.populationSize
+        self.average = np.mean(self.getFit(self.population))
 
-
-    def popFitness(self):
-        """ Updates GA's total fitness """
-
-        self.populationFitness = 0
-
-        for x in self.population:
-            self.populationFitness += x.fit
+        self.saveData(clonePop)
 
 
     def mating(self):
@@ -203,16 +196,13 @@ class GA:
                         mutant.y = np.random.normal(mutant.y, yStdDev)
                         mutant.fit = self.func([mutant.y, mutant.y])
 
-
     def run(self):
 
         self.initializePopulation()
+        self.evaluate()
 
         count = 0
-
         while count < self.iterations:
-
-            self.evaluate()
 
             self.selection()
 
@@ -220,17 +210,25 @@ class GA:
 
             self.mutate()
 
-            self.popHistory.append(self.population)
+            self.evaluate()
 
             count += 1
-
-        self.evaluate()
 
         print()
         print('FINISHED!')
         print('Best fitness value:\t\t',self.best.fit,'\t@',[self.best.x, self.best.y])
         print('Worst fitness value:\t',self.worst.fit,'\t@',[self.worst.x, self.worst.y])
         print('Average fitness value:\t', self.average)
+
+    # clones population - should fix some weird graphing shit
+    def copyPop(self):
+        newPop = []
+        for p in self.population:
+            newP = Point(p.x, p.y, self.func([p.x, p.y]))
+            newPop.append(newP)
+
+        return newPop
+
 
     # helper function for graph
     def getData(self, gen):
@@ -244,29 +242,64 @@ class GA:
 
         return x, y
 
+    def getFit(self, arr):
+        """ Returns fitness values for points in arr """
+        ret = []
+
+        for x in arr:
+            ret.append(x.fit)
+
+        return ret
+
+
+    def saveData(self, pop):
+        self.bestHistory.append(self.best)
+        self.worstHistory.append(self.worst)
+        self.averageHistory.append(self.average)
+        self.popHistory.append(pop)
 
     def graph(self):
+        # data for graphing
+        best = self.getFit(self.bestHistory)
+        worst = self.getFit(self.worstHistory)
+        average = self.averageHistory
+
         fig = plt.figure()
+
+        # Shows points converging
+        plt.subplot(1,2,1)
         plt.xlim(self.domain[0], self.domain[1])
         plt.ylim(self.range[0], self.range[1])
+        graph1, = plt.plot([], [], 'o')
 
-        graph, = plt.plot([], [], 'o')
-
-        def animate(i):
-            x, y = self.getData(i)
-            graph.set_data(x, y)
-            return graph
-
+        # adds contours to first subplot
         t1 = np.linspace(self.domain[0], self.domain[1], 100)
         t2 = np.linspace(self.range[0], self.range[1], 100)
 
         X, Y = np.meshgrid(t1, t2)
 
         Z = self.func([X, Y])
-
         plt.contour(X, Y, Z, 100, cmap='gist_ncar', alpha=0.3)
 
-        ani = FuncAnimation(fig, animate, frames=self.iterations, interval=300)
+        # Shows fitness data each iteration
+        plt.subplot(1,2,2)
+        graph2, = plt.plot([], [], '-o', color='blue', label='Best')  # best
+        graph3, = plt.plot([], [], '-x', color='red', label='Worst')  # worst
+        graph4, = plt.plot([], [], '-.', color='green', label='Average')  # average
+        plt.xlim(0, self.iterations+1)
+        plt.ylim(-.25, 1.1)
+
+
+        def animate(i):
+            x, y = self.getData(i)
+            graph1.set_data(x, y)
+            graph2.set_data(range(0,i+1), best[:i+1])
+            graph3.set_data(range(0,i+1), worst[:i+1])
+            graph4.set_data(range(0,i+1), average[:i+1])
+
+            return graph1, graph2, graph3, graph4
+
+        ani = FuncAnimation(fig, animate, frames=self.iterations+1, interval=300, repeat_delay=3000)
         # ani.save('genetic-algorithm.gif', dpi=80, writer='imagemagick')
 
         plt.show()
