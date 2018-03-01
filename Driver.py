@@ -32,8 +32,11 @@ def loadColumnFromCSV(name, columnNumber):
 
 
 if __name__ == '__main__':
+    gen = GA.GA(fun.sinc3D, [-8, 8], [-8, 8], 20, 100, 0.005, prematureStop=True)
+    gen.run()
+    gen.graph()
 
-    '''
+    ''' stuff for writing and reading data
     for i in range(1,7):
         gen1 = GA.GA(fun.sinc3D, [-8, 8], [-8, 8], i*5, 100, 0.01, prematureStop=True)
         gen2 = GA.GA(fun.sinc3D, [-8, 8], [-8, 8], i*5, 100, 0.005, prematureStop=True)
@@ -61,7 +64,7 @@ if __name__ == '__main__':
         sns.distplot(popConv[i-1], kde=False, bins=30)
 
     plt.show()
-    '''
+    
 
     x = loadColumnFromCSV('sinc3D_16x16_pop15_mut-05.csv', 4)
     y = loadColumnFromCSV('sinc3D_16x16_pop15_mut-005.csv', 4)
@@ -69,7 +72,7 @@ if __name__ == '__main__':
     print('0.005 mean =', np.mean(y))
     print('0.05 mean =', np.mean(x))
 
-
+    '''
 
 
 
