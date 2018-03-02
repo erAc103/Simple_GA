@@ -32,7 +32,7 @@ def loadColumnFromCSV(name, columnNumber):
 
 
 if __name__ == '__main__':
-    gen = GA.GA(fun.sinc3D, [-8, 8], [-8, 8], 20, 100, 0.005, prematureStop=True)
+    gen = GA.GA(fun.sinc3D, [-15, 15], [-15, 15], 20, 100, 0.05, prematureStop=True)
     gen.run()
     gen.graph()
 
