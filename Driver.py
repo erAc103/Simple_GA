@@ -7,7 +7,7 @@ import functions as fun
 import numpy as np
 import csv
 
-
+''' Dont worry about this stuff'''
 def saveToCSV(name, gen, trials):
     with open(name,'w',newline='') as f:
         writer = csv.writer(f)
@@ -32,47 +32,13 @@ def loadColumnFromCSV(name, columnNumber):
 
 
 if __name__ == '__main__':
-    gen = GA.GA(fun.sinc3D, [-15, 15], [-15, 15], 20, 100, 0.05, prematureStop=True)
+
+    # if you want the fitness values to be graphed properly, line 329 of GA must be modified to fit the fitness
+    # of the function
+    gen = GA.GA(fun.rastrigin, [-5, 5], [-5, 5], 20, 30, 0.001, prematureStop=False)
     gen.run()
     gen.graph()
 
-    ''' stuff for writing and reading data
-    for i in range(1,7):
-        gen1 = GA.GA(fun.sinc3D, [-8, 8], [-8, 8], i*5, 100, 0.01, prematureStop=True)
-        gen2 = GA.GA(fun.sinc3D, [-8, 8], [-8, 8], i*5, 100, 0.005, prematureStop=True)
-        saveToCSV('sinc3D_16x16_pop'+str(i*5)+'_mut-01.csv', gen1, 1000)
-        saveToCSV('sinc3D_16x16_pop'+str(i*5)+'_mut-005.csv', gen2, 1000)
-
-    popConv1 = []
-    popConv2 = []
-    for i in range(1,7):
-        popConv1.append(loadColumnFromCSV('sinc3D_16x16_pop'+str(i*5)+'_mut-005.csv', 4))
-        popConv2.append(loadColumnFromCSV('sinc3D_16x16_pop'+str(i*5)+'_mut-05.csv', 4))
-
-    popConv = popConv1 + popConv2
-
-
-    for i in range(1,13):
-        plt.subplot(2, 6, i)
-        plt.ylim(0,280)
-
-        if i < 7:
-            plt.title('pop'+str(i*5)+'mut 0.005')
-        else:
-            plt.title('pop'+str((i-6)*5)+'mut 0.05')
-
-        sns.distplot(popConv[i-1], kde=False, bins=30)
-
-    plt.show()
-    
-
-    x = loadColumnFromCSV('sinc3D_16x16_pop15_mut-05.csv', 4)
-    y = loadColumnFromCSV('sinc3D_16x16_pop15_mut-005.csv', 4)
-
-    print('0.005 mean =', np.mean(y))
-    print('0.05 mean =', np.mean(x))
-
-    '''
 
 
 

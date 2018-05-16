@@ -145,7 +145,7 @@ class GA:
 
 
     def crossover(self, parent1, parent2):
-        """ children are the point in between parent 1 and 2 with a perturbation
+        """ children are the points in between parent 1 and 2 with a small random perturbation
         :param parent1:
         :param parent2:
         :return: (child1, child2)
@@ -326,7 +326,7 @@ class GA:
         plt.xlim(0, self.totalGenerations)
 
         ''' Adjust this to fit max fitness for your function!!! '''
-        plt.ylim(-.25, 1.05)
+        plt.ylim(-13, 0)
 
 
         def animate(i):
